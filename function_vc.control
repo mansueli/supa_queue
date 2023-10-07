@@ -1,5 +1,0 @@
-# function_vc extension
-comment = 'In database version control for postgres functions'
-default_version = '1.0.0'
-relocatable = false
-superuser = false
