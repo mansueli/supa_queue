@@ -67,7 +67,7 @@ DECLARE
     current_job RECORD;
     response_result RECORD;
 BEGIN
-    FOR current_job IN SELECT * FROM current_jobs 
+    FOR current_job IN SELECT * FROM current_jobs
     FOR UPDATE SKIP LOCKED
     LOOP
         RAISE NOTICE 'Processing job_id: %, request_id: %', current_job.job_id, current_job.request_id;
@@ -204,11 +204,12 @@ $$;
 --
 -- Retrying jobs flagged as failures to increase reliability
 --
-CREATE OR REPLACE FUNCTION retry_failed_jobs()
-RETURNS VOID
-SECURITY DEFINER
-SET search_path = public, extensions, net, vault
-AS $$
+CREATE OR REPLACE FUNCTION public.retry_failed_jobs()
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public', 'extensions', 'net', 'vault'
+AS $function$
 DECLARE
     r RECORD;
     request_id BIGINT;
@@ -227,7 +228,7 @@ BEGIN
     FOR r IN (
             SELECT * FROM job_queue
             WHERE (status = 'failed' AND retry_count < retry_limit)
-              OR (status = 'processing' AND created_at < current_time - INTERVAL '10 minutes')
+              OR (status = 'processing' AND created_at < current_timestamp - INTERVAL '10 minutes')
             FOR UPDATE SKIP LOCKED
         ) LOOP
             RAISE NOTICE 'Retrying job_id: %', r.job_id;
@@ -252,7 +253,7 @@ BEGIN
         VALUES (request_id, r.job_id);
     END LOOP;
 END;
-$$ LANGUAGE plpgsql;
+$function$;
 
 -- Adding the trigger to the queue table:
 CREATE TRIGGER process_job_trigger
@@ -289,3 +290,7 @@ SELECT cron.schedule(
     '* * * * *',
     $$ SELECT process_tasks_subminute(); $$
 );
+
+ALTER TABLE current_jobs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE job_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workers ENABLE ROW LEVEL SECURITY;

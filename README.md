@@ -25,9 +25,9 @@ To install the `supa_queue` extension, follow these steps:
 3. Install supa_queue with the following code:
 
 ```sql
-select dbdev.install('mansueli-function_vc');
-create extension "mansueli-function_vc"
-    version '1.0.0';
+select dbdev.install('mansueli-supa_queue');
+create extension "mansueli-supa_queue"
+    version '1.0.3';
 ```
 
 ## Usage
@@ -58,7 +58,7 @@ Note that you'll need to set these values in Vault:
  - `consumer_function` this is the URL of the Edge Function that will consume the tasks.
 ## License
 
-This extension is provided under the [license](LICENSE.md) included in this repository.
+This extension is provided under the [license](https://github.com/mansueli/supa_queue/blob/master/LICENSE) included in the repository.
 
 ## Contributing
 
