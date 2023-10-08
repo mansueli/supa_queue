@@ -20,14 +20,52 @@ To install the `supa_queue` extension, follow these steps:
 
 1. Make sure you have Postgres installed and running.
 
-2. Install the required extensions `pg_cron` and `pg_net` if not already installed.
+1. Install the required extensions `pg_cron` and `pg_net` if not already installed.
 
-3. Install supa_queue with the following code:
+1. Install [DB.DEV](https://database.dev/installer):
+```sql
+create extension if not exists http with schema extensions;
+create extension if not exists pg_tle;
+select pgtle.uninstall_extension_if_exists('supabase-dbdev');
+drop extension if exists "supabase-dbdev";
+select
+    pgtle.install_extension(
+        'supabase-dbdev',
+        resp.contents ->> 'version',
+        'PostgreSQL package manager',
+        resp.contents ->> 'sql'
+    )
+from http(
+    (
+        'GET',
+        'https://api.database.dev/rest/v1/'
+        || 'package_versions?select=sql,version'
+        || '&package_name=eq.supabase-dbdev'
+        || '&order=version.desc'
+        || '&limit=1',
+        array[
+            ('apiKey', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdXB0cHBsZnZpaWZyYndtbXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAxMDczNzIsImV4cCI6MTk5NTY4MzM3Mn0.z2CN0mvO2No8wSi46Gw59DFGCTJrzM0AQKsu_5k134s')::http_header
+        ],
+        null,
+        null
+    )
+) x,
+lateral (
+    select
+        ((row_to_json(x) -> 'content') #>> '{}')::json -> 0
+) resp(contents);
+create extension "supabase-dbdev";
+select dbdev.install('supabase-dbdev');
+drop extension if exists "supabase-dbdev";
+create extension "supabase-dbdev";
+```
+
+1. Install supa_queue with the following code:
 
 ```sql
-select dbdev.install('mansueli-supa_queue');
-create extension "mansueli-supa_queue"
-    version '1.0.3';
+select dbdev.install('mansueli-function_vc');
+create extension "mansueli-function_vc"
+    version '1.0.0';
 ```
 
 ## Usage
