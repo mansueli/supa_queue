@@ -63,9 +63,19 @@ create extension "supabase-dbdev";
 1. Install supa_queue with the following code:
 
 ```sql
-select dbdev.install('mansueli-function_vc');
-create extension "mansueli-function_vc"
-    version '1.0.0';
+select dbdev.install('mansueli-supa_queue');
+create extension "mansueli-supa_queue"
+    version '1.0.3';
+```
+
+You can also install it in a different `schema` with:
+
+```sql
+create schema supa_queue;
+select dbdev.install('mansueli-supa_queue');
+create extension "mansueli-supa_queue"
+    schema supa_queue
+    version '1.0.3';
 ```
 
 ## Usage
