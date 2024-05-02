@@ -1,6 +1,5 @@
-# supa_queue extension
-comment = 'Simple Queue system for Postgres using pg_cron & pg_net'
-default_version = '1.0.2'
-requires = pg_cron pg_net
-relocatable = false
-superuser = false
+default_version='1.0.4'
+comment='Simple Queue system for Postgres using pg_cron & pg_net'
+requires=pg_cron,pg_net
+relocatable=true
+superuser=false
